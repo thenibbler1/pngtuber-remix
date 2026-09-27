@@ -30,8 +30,6 @@ signal project_updates
 
 signal mode_changed
 signal deselect
-signal theme_update
-
 signal update_pos_spins
 signal update_offset_spins
 

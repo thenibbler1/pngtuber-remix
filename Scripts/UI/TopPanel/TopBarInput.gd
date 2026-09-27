@@ -56,7 +56,6 @@ func _ready() -> void:
 	window_button.get_popup().id_pressed.connect(_on_window_id_pressed)
 
 	Global.mode_changed.connect(_on_mode_changed)
-	Global.theme_update.connect(_on_grid_theme_update)
 	Global.deselect.connect(_deselect_everything)
 	Global.dev_mode.connect(_check_dev_mode)
 
@@ -321,20 +320,14 @@ func _on_grid_id_pressed(id: int) -> void:
 	popup.set_item_checked(1, Global.grid_snap)
 	popup.set_item_text(2, "Snap Size: %.1f px" % Global.grid_size)
 
-func _on_grid_theme_update(new_theme: Theme = null) -> void:
-	if grid_size_dialog != null and is_instance_valid(grid_size_dialog):
-		grid_size_dialog.theme = new_theme if new_theme != null else Settings.current_theme
-
 func _show_grid_size_dialog() -> void:
 	if grid_size_dialog != null and is_instance_valid(grid_size_dialog):
-		grid_size_dialog.theme = Settings.current_theme
 		grid_size_dialog.popup_centered()
 		grid_size_spinbox.grab_focus()
 		grid_size_spinbox.get_line_edit().select_all()
 		return
 
 	grid_size_dialog = AcceptDialog.new()
-	grid_size_dialog.theme = Settings.current_theme
 	grid_size_dialog.title = "Grid Snap Size"
 	grid_size_dialog.ok_button_text = "Apply"
 	grid_size_dialog.min_size = Vector2i(320, 130)

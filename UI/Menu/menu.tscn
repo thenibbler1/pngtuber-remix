@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://ckgt30cxu04dj"]
 
-[ext_resource type="Theme" uid="uid://c5v4ocnimqa4i" path="res://Themes/WhiteTheme/WhiteTheme.tres" id="1_7rfvp"]
 [ext_resource type="PackedScene" uid="uid://b28gjkefgi5bs" path="res://Main/main.tscn" id="1_gqyth"]
 [ext_resource type="Script" uid="uid://bu4x5kkbran8t" path="res://Scripts/UI/Menu/menu.gd" id="1_orlfr"]
 [ext_resource type="PackedScene" uid="uid://ictpm6d87pn6" path="res://UI/Menu/menu_screen_popup.tscn" id="3_ls8lc"]
@@ -13,7 +12,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_7rfvp")
 script = ExtResource("1_orlfr")
 
 [node name="Lipsync" type="Node" parent="." unique_id=628902606]

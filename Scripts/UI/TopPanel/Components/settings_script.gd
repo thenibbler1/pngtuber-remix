@@ -5,8 +5,6 @@ var change_setting : bool = false
 var counter : int = 0
 
 func _ready() -> void:
-	%UIThemeButton.item_selected.connect(Settings._on_ui_theme_button_item_selected)
-	%UIThemeButton.select(Settings.theme_settings.theme_id)
 	%MicroPhoneMenu.get_popup().connect("id_pressed",choosing_device)
 	_populate_languages()
 	LanguageManager.language_changed.connect(_on_language_changed)

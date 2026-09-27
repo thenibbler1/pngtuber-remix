@@ -7,7 +7,6 @@ var last_mode: int = -1
 
 
 func _ready() -> void:
-	Global.theme_update.connect(update_theme)
 	Global.add_window.connect(new_window)
 	Global.edit_windows.connect(unlock_windows)
 
@@ -53,11 +52,6 @@ func lock_window(window: ExtraWindow) -> void:
 		return
 	window.borderless = true
 	window.button.hide()
-
-
-func update_theme(new_theme: Theme) -> void:
-	for window in windows:
-		window.button.theme = new_theme
 
 
 func unlock_windows() -> void:

@@ -41,7 +41,6 @@ func _init(world: World2D, remove_window: Callable, lock_window: Callable, other
 	control.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	control.add_child(button)
-	button.theme = Settings.current_theme
 	button.text = tr("TR_LOCK_SIZE")
 	button.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
 	button.position -= Vector2.ONE * BUTTON_MARGIN

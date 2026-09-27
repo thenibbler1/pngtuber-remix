@@ -26,14 +26,8 @@ func _ready() -> void:
 	Global.light = %LightSource
 	Global.camera = %Camera2D
 	Global.camera_pos = %CamPos
-	Global.theme_update.connect(update_theme)
-	update_theme(Settings.current_theme)
 	await get_tree().create_timer(0.1).timeout
 	Global.update_camera_smoothing()
-
-func update_theme(new_theme : Theme = preload("res://Themes/PurpleTheme/GUITheme.tres")):
-	%UI.theme = new_theme
-
 
 func clear_sprites():
 	Global.held_sprite = null

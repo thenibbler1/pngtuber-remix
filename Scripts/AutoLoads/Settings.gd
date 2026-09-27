@@ -1,17 +1,15 @@
 extends Node
 
-signal theme_changed
 signal file_error
 
 var top_bar = null
-var ui_theme
 var save_timer : Timer = Timer.new()
-var current_theme : Theme = preload("res://Themes/PurpleTheme/GUITheme.tres")
 const SAVED_LAYOUT_PATH := "user://layout.tres"
 
 @warning_ignore("integer_division")
 @onready var theme_settings : Dictionary = {
-	theme_id = 0,
+	# Unused here; kept so upstream Remix can still read this settings file (8 = no theme).
+	theme_id = 8,
 	auto_load = false,
 	path = "",
 	save_on_exit = false,
@@ -128,8 +126,6 @@ func _ready():
 		var info = load_file.get_var()
 		if info is Dictionary:
 			theme_settings.merge(info, true)
-			theme_settings.theme_id = info.theme_id
-			loaded_UI(theme_settings.theme_id)
 			
 			if theme_settings.screen_window == 0:
 				get_window().mode = get_window().MODE_WINDOWED
@@ -150,14 +146,12 @@ func _ready():
 		
 	else:
 		var create_file = FileAccess.open(save_location, FileAccess.WRITE)
-		theme_settings.theme_id = 0
 		if (create_file):
 			create_file.store_var(theme_settings)
 			create_file.close()
 		else:
 			push_error(FileAccess.get_open_error())
 			file_error.emit("INITIAL_SAVE_ERROR", FileAccess.get_open_error())
-		loaded_UI(theme_settings.theme_id)
 		set_backed_default()
 	
 	get_window().size_changed.connect(window_size_changed)
@@ -255,34 +249,6 @@ func check_ui():
 			top_bar.get_node("%TopBarInput").choosing_mode(0)
 		else:
 			top_bar.get_node("%TopBarInput").choosing_mode(1)
-
-func loaded_UI(id):
-	_on_ui_theme_button_item_selected(id)
-
-func _on_ui_theme_button_item_selected(index):
-	match index:
-		0:
-			current_theme = preload("res://Themes/PurpleTheme/GUITheme.tres")
-		1:
-			current_theme = preload("res://Themes/BlueTheme/BlueTheme.tres")
-		2:
-			current_theme = preload("res://Themes/OrangeTheme/OrangeTheme.tres")
-		3:
-			current_theme = preload("res://Themes/WhiteTheme/WhiteTheme.tres")
-		4:
-			current_theme = preload("res://Themes/DarkTheme/DarkTheme.tres")
-		5:
-			current_theme = preload("res://Themes/GreenTheme/Green_theme.tres")
-		6:
-			current_theme = preload("res://Themes/FunkyTheme/Funkytheme.tres")
-		7:
-			current_theme = preload("res://Themes/FrutigerAeroTheme/FrutigerAero.tres")
-		8:
-			current_theme = null
-	
-	Settings.theme_settings.theme_id = index
-	Global.theme_update.emit(current_theme)
-	save()
 
 func _on_auto_load_check_toggled(toggled_on):
 	Settings.theme_settings.auto_load = toggled_on

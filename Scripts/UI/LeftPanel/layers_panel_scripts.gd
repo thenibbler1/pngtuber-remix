@@ -8,27 +8,9 @@ var append_obj = preload("res://Misc/AppendageObject/Appendage_object.tscn")
 var has_folder : bool = false
 
 func _ready() -> void:
-	Settings.theme_changed.connect(change_theme)
 	Global.deselect.connect(nullfy)
 	Global.reinfo.connect(enable)
 	nullfy()
-
-func change_theme(index):
-	match index:
-		0:
-			%LayerPopup.theme = preload("res://Themes/PurpleTheme/GUITheme.tres")
-		1:
-			%LayerPopup.theme = preload("res://Themes/BlueTheme/BlueTheme.tres")
-		2:
-			%LayerPopup.theme = preload("res://Themes/OrangeTheme/OrangeTheme.tres")
-		3:
-			%LayerPopup.theme = preload("res://Themes/WhiteTheme/WhiteTheme.tres")
-		4:
-			%LayerPopup.theme = preload("res://Themes/DarkTheme/DarkTheme.tres")
-		5:
-			%LayerPopup.theme = preload("res://Themes/GreenTheme/Green_theme.tres")
-		6:
-			%LayerPopup.theme = preload("res://Themes/FunkyTheme/Funkytheme.tres")
 
 func nullfy():
 	%ReplaceButton.disabled = true

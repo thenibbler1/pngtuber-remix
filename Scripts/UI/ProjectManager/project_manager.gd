@@ -10,13 +10,6 @@ var project_sel = preload("res://Scripts/UI/ProjectManager/project_selector.gd")
 var current_type : FileType = FileType.None
 var placeholder_path : String = ""
 
-func _ready() -> void:
-	await get_tree().physics_frame
-	update_theme(Settings.current_theme)
-
-func update_theme(new_theme : Theme = preload("res://Themes/PurpleTheme/GUITheme.tres")):
-	theme = new_theme
-
 func _on_import_project_pressed() -> void:
 	%FileDialog.filters = ["*.pngRemix", "*.remixProj"]
 	%FileDialog.file_mode = FileDialog.FileMode.FILE_MODE_OPEN_FILE

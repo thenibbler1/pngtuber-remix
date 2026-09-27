@@ -34,10 +34,8 @@ func _ready():
 	Global.mesh_pointer = %MeshPointer
 	Global.update_camera_smoothing()
 	
-	Global.theme_update.connect(update_theme)
 	Global.file_dialog = %FileDialog
 	%FileDialog.use_native_dialog = true
-	update_theme(Settings.current_theme)
 	await get_tree().create_timer(0.1).timeout
 	Global.update_ui_pieces.emit()
 	Global.update_camera_smoothing()
@@ -78,11 +76,6 @@ func mode_changed(mode : int):
 			%ProjectNamePanel.show()
 		else:
 			%ProjectNamePanel.hide()
-
-func update_theme(new_theme : Theme = preload("res://Themes/PurpleTheme/GUITheme.tres")):
-	%UIHold.theme = new_theme
-	%ConfirmTrim.theme = new_theme
-	%ConfirmationDialog.theme = new_theme
 
 func new_file():
 	%ConfirmationDialog.popup()

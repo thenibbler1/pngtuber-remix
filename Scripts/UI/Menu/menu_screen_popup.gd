@@ -7,7 +7,6 @@ var streamer_mode = preload("res://Main/main_stream.tscn")
 var current_mode : int = 0 
 
 func _ready() -> void:
-	Global.theme_update.connect(update_theme)
 	close_requested.connect(close)
 	confirmed.connect(close)
 
@@ -67,9 +66,6 @@ func forced_backup_save():
 		SaveAndLoad.save_data()
 		var sav = SaveAndLoad.save_dict
 		SaveAndLoad.save_backup(sav, SaveAndLoad.backs_dir.path_join(str(randi())+ ".pngRemix"))
-
-func update_theme(new_theme : Theme = preload("res://Themes/PurpleTheme/GUITheme.tres")):
-	theme = new_theme
 
 func close():
 	hide()

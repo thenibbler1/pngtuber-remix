@@ -108,7 +108,6 @@ TR_CYCLE_TOGGLE_LABEL,Cycle Toggle,Переключение цикла
 TR_DAMPING_X,Damping X,Затухание X
 TR_DAMPING_Y,Damping Y,Затухание Y
 TR_DAMP_LABEL,Damp,Затухание
-TR_DARK,Dark,Тёмный
 TR_DARKEN,Darken,Затемнение
 TR_DEBUG,Debug,Отладка
 TR_DEFLATE_BRUSH,Deflate Brush,Сжимающая кисть
@@ -192,11 +191,9 @@ TR_FOLLOW_THROUGH,Follow Through,Последействие
 TR_FOLLOW_WOBBLE,Wobble Movement,Покачивание
 TR_FOR_TESTING_LABEL,For testing only,Только для тестирования
 TR_FRAME_LABEL,Frame,Кадр
-TR_FRUTIGER_AERO,Frutiger Aero,Фрутигер аэро
 TR_FT_DRAG,Drag,Сопротивление
 TR_FT_STRETCH,Stretch,Растяжение
 TR_FULL_CREDITS,PNGTuber Remix by TheMime\nImproved UI by LeoRson\nWebSocket code by vj4,PNGTuber Remix — TheMime\nУлучшенный интерфейс — LeoRson\nКод WebSocket — vj4
-TR_FUNKY,Funky,Фанк
 TR_GENERATION,Generation,Генерация
 TR_GEN_CORNERS,Generate Corners,Создать углы
 TR_GEN_FLIPPED,Generate Mirrored,Сгенерировать зеркальную
@@ -324,7 +321,6 @@ TR_OPEN_SEE_FACE,OpenSeeFace,OpenSeeFace
 TR_OPEN_SETTINGS,Open Settings,Открыть настройки
 TR_OPTIMIZE,Optimize,Оптимизировать
 TR_OPTIMIZE_TRIM,Trim Model,Обрезать модель
-TR_ORANGE,Orange,Оранжевый
 TR_OTHERS,Others,Другое
 TR_OUTER_PADDING,Outer Padding,Внешний отступ
 TR_OUTLINE,Outline,Обводка
@@ -353,7 +349,6 @@ TR_PROJECT_SAVED,Project Saved,Проект сохранён
 TR_PROPERTIES_HIDDEN_ITEM,"If enabled, the current object is hidden outside the editor","Если включено, текущий объект скрывается вне редактора"
 TR_PROTANOPIA,Protanopia,Протанопия
 TR_PSD_IMPORT,Import PSD,Импортировать PSD
-TR_PURPLE,Purple,Фиолетовый
 TR_QUIT,Quit,Выйти
 TR_RADIAL_SPACING,Radial Spacing,Радиальное расстояние
 TR_RAINBOW,Rainbow,Радуга
@@ -554,7 +549,6 @@ TR_WASD_WS,WASD (W/S),WASD (W/S)
 TR_WEBSOCKET_DOC,WebSocket Docs,Документация WebSocket
 TR_WELCOME,Welcome!,Добро пожаловать!
 TR_WHAT_IS_PNG_TUBING_FULL,"PNGTubing is a form of Vtubing. However, unlike Vtubing, it is much simpler and less costly. This is why it gained popularity in recent years. There are some different types of PNGTubing, this includes Static (like the model shown), Toon and Rigged. In this software -PNGTube-Remix, you can create both Static and Rigged! Even mix them up if needed. Hope you have fun!","PNGTubing — разновидность Vtubing, но гораздо проще и дешевле, поэтому он стал так популярен в последние годы. Есть разные виды PNGTubing: статичный (как показано), мультяшный и «риггед». В PNGTube-Remix можно делать и статичные, и риггед‑модели, а при желании смешивать подходы. Удачи и приятного творчества!"
-TR_WHITE,White,Светлый
 TR_WIDTH,Width,Ширина
 TR_WIGGLE_APPENDAGE,Wiggle Appendage,Покачивание придатка
 TR_WIGGLE_PHYSICS,Wiggle Physics,Физика покачивания
