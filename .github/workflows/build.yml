@@ -1,0 +1,90 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build Windows from source
+    runs-on: ubuntu-24.04
+    env:
+      SCONS_CACHE: ${{ github.workspace }}/.scons-cache
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # full history, so version.txt gets a real `git describe`
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mingw-w64
+          pip install scons==4.11.1
+
+      - name: Cache Godot download
+        uses: actions/cache@v4
+        with:
+          path: .tools
+          key: godot-${{ hashFiles('tools/build.sh') }}
+
+      - name: Cache compiled objects
+        uses: actions/cache@v4
+        with:
+          path: .scons-cache
+          key: scons-${{ hashFiles('.gitmodules', 'native/**') }}
+          restore-keys: scons-
+
+      - name: Build
+        run: tools/build.sh windows
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PNGTube-Remix-windows-x86_64
+          path: dist/windows/
+          if-no-files-found: error
+
+  smoke-test-windows:
+    name: Smoke test on Windows
+    needs: build-windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: PNGTube-Remix-windows-x86_64
+          path: app
+
+      # Boots the exported app headless for 600 frames. Fails if it crashes, if a
+      # native extension DLL does not load, or if any script errors.
+      - name: Run exported app
+        shell: pwsh
+        run: |
+          & app/PNGTube-Remix.console.exe --headless --quit-after 600 *> smoke.log
+          $code = $LASTEXITCODE
+          Get-Content smoke.log
+          if ($code -ne 0) { throw "App exited with code $code" }
+          $bad = Select-String -Path smoke.log -Pattern 'SCRIPT ERROR', 'Parse Error', 'dynamic library', 'Error loading extension', 'Cannot get class', 'Failed loading resource'
+          if ($bad) { $bad; throw "Errors found in app log" }
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-windows, smoke-test-windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: PNGTube-Remix-windows-x86_64
+          path: PNGTube-Remix
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          zip -r "PNGTube-Remix-${GITHUB_REF_NAME}-windows-x86_64.zip" PNGTube-Remix
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --generate-notes \
+            "PNGTube-Remix-${GITHUB_REF_NAME}-windows-x86_64.zip"

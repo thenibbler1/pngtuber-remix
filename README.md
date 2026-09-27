@@ -1,61 +1,53 @@
-<br />
-<div align="center">
-  <a href="https://github.com/MudkipWorld/PNGTuber-Remix">
-	<img src="https://github.com/MudkipWorld/PNGTuber-Remix/assets/94318023/47bd9ee0-13e3-4ad8-af88-90dd5fa34628" alt="Logo" width="350" height="350">
-  </a>
+# PNGTube-Remix (reproducible build)
 
-  <h3 align="center">PNGTube-Remix</h3>
+A fork of [MudkipWorld/PNGTuber-Remix](https://github.com/MudkipWorld/PNGTuber-Remix)
+(version 1.4.7, upstream commit `12c662b`), used with the developer's permission.
+It's the same PNGTubing app with every feature, but anyone can rebuild it from
+source with one command, from pinned inputs.
 
-  <p align="center">
-	Start PNGTubing in a more interesting and alive way.
-	<br />
-	<a href="https://mudkipworld.github.io/PNGRemix-Doc/#/"><strong>Explore the docs »</strong></a>
-	<br />
-	<br />
-	&middot;
-	<a href="https://github.com/MudkipWorld/PNGTuber-Remix/issues">Report Bug</a>
-  </p>
-</div>
+## What's different from upstream
 
-## About The Project
+| | Upstream | This fork |
+|---|---|---|
+| Native plugins (global hotkeys, mic input, mesh deform, GIF import) | Prebuilt `.dll`/`.so` files committed to the repo; sources live in other repos and don't build against current godot-cpp | Built from source in [`native/`](native/) against a pinned godot-cpp, by one command |
+| Build | Hand-built binaries plus a CI export | `tools/build.sh` pins Godot 4.7.2 by SHA-512 and does everything; CI runs the same script and boots the result on real Windows |
+| MinGW runtime DLLs | Shipped loose next to the exe | Linked statically, so none needed |
+| UI themes | 8 color skins plus a picker in Settings | Removed; the app uses the plain default Godot look (upstream's "None" option) |
+| Platforms | Windows, Linux | Windows (Linux still builds and is used for testing) |
 
-This is a PNGTube (PuppeTube/ PaperDoll-Tube) software made using Godot! It is still development and in its early stages, but fully usable and you can make your custom models in it!
+Everything else (models, rigging, appendages, meshes, PSD/GIF/APNG import,
+WebSocket and tracking, lip sync, hotkeys, stream mode) is upstream code,
+unchanged.
 
-Main Features:
-* You can make rigged models in it.
-* Many different ui themes to choose from.
-* So many different toggles and options to play with.
-* A Layers TreeView to drag items around.
-* Model File manager where you can easily reuse and swap model images.
-* PSD import support.
-* Three object types; Sprites, Appendages and Folders.
-* WebSocket support!
+## Download
 
-### Built With
-This project is built using the Godot game engine!
+- **Latest build:** Actions tab → latest green **Build** run → artifact
+  `PNGTube-Remix-windows-x86_64`.
+- **Releases:** pushing a tag like `v1.4.7-r1` publishes a zip on the Releases page.
 
-<a href="https://github.com/godotengine/godot">
-  <img src="https://github.com/godotengine/godot/raw/master/logo_outlined.svg" alt="Godot Logo" width="150" height="150">
-</a>
+Unzip it anywhere and run `PNGTube-Remix.exe`. Keep the `.pck` and `.dll` files
+next to the exe.
 
-## Examples
-https://github.com/user-attachments/assets/8d10c5e7-b207-4cb4-9dd6-00a2bd14dcfd
+## Build it yourself
+
+See [BUILDING.md](BUILDING.md). Short version, on Ubuntu 24.04 or WSL2:
+
+```bash
+sudo apt-get install -y git curl unzip g++ mingw-w64 python3-pip && pip install scons
+git clone <this repo> pngtuber-remix && cd pngtuber-remix
+tools/build.sh            # -> dist/PNGTube-Remix-windows-x86_64.zip
+```
 
 ## License
-This Project is under a Custom License. Please, refer to it for more info <a href="https://github.com/MudkipWorld/PNGTuber-Remix/blob/1.4.x/LICENSE">Official License </a>
 
-## Discord
-Please, if you would like a direct contact with me. Join the official discord!
-[Official Discord Server](https://discord.gg/un3JBEvYNR)
+PNGTuber Remix is © MudkipWorld under a custom license: see [LICENSE](LICENSE).
+Commercial use or redistribution needs the copyright holder's prior written
+permission. Third-party components are listed in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
-## Special thanks to
-* [General Tekno](https://github.com/GeneralTekno)
-* [Guuvita](https://x.com/Guuvita)
-* [LeoRson](https://github.com/LeoRson)
-* [Godot Game Engine](https://github.com/godotengine/godot)
-* [LibUIOHook](https://github.com/kwhat/libuiohook)
-* Pixelorama for their PSD import
-* vj4 for the Websocket implementation
-* Mushie for the Documentation
+## Credits
 
-<br>Note : This used to be a forked of PNGTuber+, credits to Kaiakairos. make sure to support them :D</br>
+Made by [MudkipWorld](https://github.com/MudkipWorld) ([docs](https://mudkipworld.github.io/PNGRemix-Doc/#/),
+[Discord](https://discord.gg/un3JBEvYNR)). Originally a fork of PNGTuber+ by Kaiakairos.
+Upstream thanks General Tekno, Guuvita, LeoRson, the Godot project, Pixelorama
+(PSD import), vj4 (WebSocket implementation) and Mushie (documentation).
