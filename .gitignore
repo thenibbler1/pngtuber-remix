@@ -55,3 +55,18 @@ Icon
 # Temporary files / logs
 *.tmp
 *.log
+
+# Native extension build outputs: produced from native/ by tools/build.sh
+native/build/
+native/.sconsign.dblite
+addons/GI/windows/
+addons/GI/linux/
+addons/miniaudio/windows/
+addons/miniaudio/linux/
+addons/CustomMesh/windows/
+addons/CustomMesh/linux/
+addons/godotgif/bin/
+
+# Build tooling and output
+/.tools/
+/dist/

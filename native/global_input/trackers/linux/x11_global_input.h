@@ -18,6 +18,8 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
+#include <string>
 
 using namespace godot;
 

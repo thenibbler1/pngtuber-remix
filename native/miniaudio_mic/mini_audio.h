@@ -14,6 +14,7 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <mutex>
+#include <vector>
 #include <algorithm>
 
 #include <stdlib.h>

@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+"""
+Builds every native GDExtension the app loads, from source, against the pinned
+godot-cpp in ./godot-cpp, and writes each library straight into the addons/
+folder its .gdextension file points at.
+
+Run from this directory:
+
+    scons platform=windows target=template_release   # loaded by the exported app
+    scons platform=windows target=template_debug     # loaded by the Godot editor
+
+On Linux, platform=windows cross-compiles with MinGW-w64. The C++ runtime is
+linked statically, so no libstdc++/libgcc/libwinpthread DLLs need shipping.
+"""
+import os
+
+# The app targets Godot 4.7; build against that API unless overridden.
+api_version = ARGUMENTS.get("api_version", "4.7")
+Export("api_version")
+
+env = SConscript("godot-cpp/SConstruct")
+
+ADDONS = os.path.normpath(os.path.join(Dir("#").abspath, "..", "addons"))
+BUILD = os.path.join(Dir("#").abspath, "build")
+
+
+def walk(src_dir, recursive):
+    """(dir, files) pairs under src_dir, sorted so builds are deterministic."""
+    for root, dirs, files in os.walk(src_dir):
+        dirs.sort()
+        yield root, sorted(files)
+        if not recursive:
+            break
+
+
+def extension(name, src_dir, out_path, recursive=False, libs=None):
+    """Compile src_dir into <addons>/<out_path><suffix><SHLIBSUFFIX>."""
+    e = env.Clone()
+    e["SHLIBPREFIX"] = ""
+    src_dir = Dir(src_dir).srcnode().abspath
+    variant = os.path.join(BUILD, name)
+    e.VariantDir(variant, src_dir, duplicate=False)
+
+    sources = []
+    for root, files in walk(src_dir, recursive):
+        e.Append(CPPPATH=[root])
+        rel = os.path.relpath(root, src_dir)
+        sources += [os.path.join(variant, rel, f) for f in files if f.endswith((".c", ".cpp"))]
+    e.Append(LIBS=libs or [])
+
+    target = os.path.join(ADDONS, out_path + e["suffix"] + e["SHLIBSUFFIX"])
+    return e.SharedLibrary(target, sources)
+
+
+platform = env["platform"]
+if platform not in ("windows", "linux"):
+    raise SystemExit("Only platform=windows and platform=linux are supported.")
+
+sys_libs = ["user32"] if platform == "windows" else ["pthread", "dl", "m"]
+libs = [
+    # Global hotkeys and mouse tracking while the app is unfocused.
+    extension("global_input", "global_input", "GI/{0}/GlobalInput".format(platform), libs=sys_libs),
+    # Microphone capture and volume/FFT analysis (miniaudio + kiss_fft).
+    extension("miniaudio_mic", "miniaudio_mic", "miniaudio/{0}/MiniAudio".format(platform), libs=sys_libs),
+    # Mesh deformation for sprites.
+    extension("custom_mesh", "custom_mesh", "CustomMesh/{0}/CustomMesh".format(platform), libs=sys_libs),
+    # GIF import (third-party, MIT).
+    extension(
+        "godot_gif",
+        "godot-gif/src",
+        "godotgif/bin/{0}godotgif".format("lib" if platform == "linux" else ""),
+        recursive=True,
+    ),
+]
+
+Default(libs)
