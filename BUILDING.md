@@ -107,12 +107,29 @@ After merging:
 - **Upstream changed a plugin's C++:** copy the new source from
   [Godot-Global-Input](https://github.com/MudkipWorld/Godot-Global-Input) or
   [GDExtensionsPlayGround](https://github.com/MudkipWorld/GDExtensionsPlayGround)
-  into `native/`, then re-apply this fork's include fixes (skip any the new
-  source already has) and record the new commit in THIRD-PARTY-NOTICES.md:
+  into `native/`, then re-apply this fork's include fixes and record the new
+  commit in THIRD-PARTY-NOTICES.md. A three-way apply skips fixes the new source
+  already has; resolve any conflict markers by keeping every `#include`:
   ```bash
-  git diff 5b80834 3c87a9c -- native/global_input native/miniaudio_mic | git apply
+  git add native/global_input native/miniaudio_mic
+  git diff 5b80834 3c87a9c -- native/global_input native/miniaudio_mic | git apply --3way
   ```
 - **Upstream touched theme code:** keep this fork's version, which has no themes.
 - **Upstream changed the demo models:** `tools/smoke_test.sh` will fail. Once
   you're happy the new models load correctly, update the expected values in
   `tools/smoke_test.gd`.
+
+## Bumping Godot
+
+1. In `tools/build.sh`, update `GODOT_VERSION` and the two SHA-512 sums (from
+   the release's `SHA512-SUMS.txt`).
+2. Replace `licenses/godot-<version>/` with `LICENSE.txt` and `COPYRIGHT.txt`
+   from the new `<version>-stable` tag. The build stops if they're missing.
+3. In `tools/mesa_notice.sh`, set `NIR_TAG` to the `mesa_version` in that tag's
+   `misc/scripts/install_d3d12_sdk_windows.py`, and push. The "Regenerate Mesa
+   notice" workflow runs and pushes the new `licenses/mesa.txt` to the
+   `mesa-notice` branch; merge it.
+4. If godot-cpp supports the new version's API (see `supported_api_versions` in
+   `native/godot-cpp/tools/godotcpp.py`), raise the `api_version` default in
+   `native/SConstruct` and `compatibility_minimum` in the four `.gdextension`
+   files to match.
