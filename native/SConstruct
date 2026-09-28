@@ -38,7 +38,9 @@ def extension(name, src_dir, out_path, recursive=False, libs=None):
     e = env.Clone()
     e["SHLIBPREFIX"] = ""
     src_dir = Dir(src_dir).srcnode().abspath
-    variant = os.path.join(BUILD, name)
+    # One object dir per platform/target, so switching targets doesn't recompile
+    # everything and concurrent builds of different targets don't collide.
+    variant = os.path.join(BUILD, e["suffix"].lstrip("."), name)
     e.VariantDir(variant, src_dir, duplicate=False)
 
     sources = []
@@ -57,6 +59,12 @@ if platform not in ("windows", "linux"):
     raise SystemExit("Only platform=windows and platform=linux are supported.")
 
 sys_libs = ["user32"] if platform == "windows" else ["pthread", "dl", "m"]
+if platform == "windows":
+    # Byte-identical DLLs across builds and checkout folders: no link timestamp,
+    # and a fixed preferred image base (MinGW otherwise derives one from the
+    # output path). ASLR still relocates the DLLs at load time.
+    env.Append(LINKFLAGS=["-Wl,--no-insert-timestamp", "-Wl,--disable-auto-image-base"])
+
 libs = [
     # Global hotkeys and mouse tracking while the app is unfocused.
     extension("global_input", "global_input", "GI/{0}/GlobalInput".format(platform), libs=sys_libs),
@@ -73,4 +81,8 @@ libs = [
     ),
 ]
 
+# Always relink (objects stay cached), so the libraries under addons/ are
+# guaranteed to come from this source even if something else, like an upstream
+# merge, dropped a different binary at the same path.
+AlwaysBuild(libs)
 Default(libs)
