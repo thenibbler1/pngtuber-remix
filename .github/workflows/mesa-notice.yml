@@ -1,0 +1,30 @@
+name: Regenerate Mesa notice
+
+# Run by hand after bumping Godot (see tools/mesa_notice.sh), then commit the
+# licenses/mesa.txt from the artifact.
+on: workflow_dispatch
+
+jobs:
+  mesa-notice:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Mesa's code generator dependencies
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends python3-mako
+
+      - name: Regenerate licenses/mesa.txt
+        run: tools/mesa_notice.sh
+
+      - name: Show the result
+        run: |
+          sha256sum licenses/mesa.txt
+          git diff --stat -- licenses/mesa.txt
+          # Exact copy for anyone who can read the log but not the artifact.
+          gzip -9cn licenses/mesa.txt | base64 -w 0; echo
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: mesa-notice
+          path: licenses/mesa.txt
+          retention-days: 7
