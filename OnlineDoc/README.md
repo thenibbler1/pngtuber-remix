@@ -512,7 +512,6 @@ This is where you can choose the Background color of your preview or during stre
 ---
 
 #### Settings
-- UI Theme : Changes the theme/ UI colors.
 
 ##### Model
 - Detect Hotkeys : Enables/ Disable the Hotkeys detection.
