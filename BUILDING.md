@@ -24,11 +24,13 @@ Every push to `main` runs [`.github/workflows/build.yml`](.github/workflows/buil
 2. **smoke-test-windows** (real Windows): boots both exports headless for 600
    frames. It fails on a crash, a plugin DLL that won't load, a missing node, or
    (in the debug build) any GDScript error.
-3. **release** (only for `v*` tags): attaches the zip to a GitHub Release.
+3. **release** (only for a published release or a pushed `v*` tag): attaches the
+   zip to the GitHub Release.
 
 Download the result from the run's **Artifacts**. Artifacts are kept for 3 days
-to stay within GitHub's storage quota. For a build you want to keep, push a tag
-(`git tag v1.4.7-r1 && git push origin v1.4.7-r1`) and download it from Releases.
+to stay within GitHub's storage quota. For a build you want to keep, publish a
+release: Releases, Draft a new release, choose a new tag such as `v1.4.7-r1`,
+Publish. (Pushing a `v*` tag does the same.) The zip appears under its Assets.
 
 ## Option 2: build locally
 

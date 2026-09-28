@@ -22,7 +22,8 @@ unchanged.
 
 ## Download
 
-- **Releases:** pushing a tag like `v1.4.7-r1` publishes a zip on the Releases page.
+- **Releases:** publish a release on the Releases page (Draft a new release, new tag like
+  `v1.4.7-r1`, Publish). CI builds and tests it, then attaches the zip in about 10 minutes.
   This is the copy to keep.
 - **Latest build:** Actions tab → latest green **Build** run → artifact
   `PNGTube-Remix-windows-x86_64` (kept for 3 days).
