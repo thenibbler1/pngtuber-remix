@@ -1,8 +1,16 @@
 name: Regenerate Mesa notice
 
-# Run by hand after bumping Godot (see tools/mesa_notice.sh), then commit the
-# licenses/mesa.txt from the artifact.
-on: workflow_dispatch
+# Runs when the Mesa notice tool or its pin changes (bump NIR_TAG in
+# tools/mesa_notice.sh together with Godot), or by hand. Commit the
+# licenses/mesa.txt from the artifact if it reports a difference.
+on:
+  push:
+    branches: [main]
+    paths:
+      - tools/mesa_notice.sh
+      - tools/mesa_notice.py
+      - .github/workflows/mesa-notice.yml
+  workflow_dispatch:
 
 jobs:
   mesa-notice:
@@ -19,7 +27,9 @@ jobs:
       - name: Show the result
         run: |
           sha256sum licenses/mesa.txt
-          git diff --stat -- licenses/mesa.txt
+          if [[ -n "$(git status --porcelain -- licenses/mesa.txt)" ]]; then
+            echo "::warning::licenses/mesa.txt is out of date; commit the one from the mesa-notice artifact."
+          fi
           # Exact copy for anyone who can read the log but not the artifact.
           gzip -9cn licenses/mesa.txt | base64 -w 0; echo
 

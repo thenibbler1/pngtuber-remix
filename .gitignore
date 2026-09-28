@@ -73,3 +73,4 @@ addons/*/macos/
 /dist/
 # Written temporarily by tools/smoke_test.sh
 /override.cfg
+__pycache__/
