@@ -18,32 +18,65 @@ jobs:
         with:
           fetch-depth: 0 # full history, so version.txt gets a real `git describe`
 
+      # Plugins must be built from native/, never committed (an upstream merge
+      # can bring prebuilt ones back).
+      - name: Check no prebuilt binaries are committed
+        run: |
+          if git ls-files | grep -E '\.(dll|so|dylib|a|exe)$|\.framework/'; then
+            echo "::error::Prebuilt binaries are committed (listed above); remove them with git rm."
+            exit 1
+          fi
+
+      # The same packages BUILDING.md tells you to install locally.
       - name: Install toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends mingw-w64
-          pip install scons==4.11.1
+          sudo apt-get install -y --no-install-recommends git curl unzip python3 g++ mingw-w64 scons
+
+      - name: Compute cache keys
+        id: keys
+        run: |
+          # Godot download: changes only when the pinned version or hashes do.
+          echo "godot=$(grep -E '^GODOT_[A-Z0-9_]+=' tools/build.sh | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          # Compiled objects: submodule pins plus plugin sources.
+          echo "native=$(git ls-tree -r HEAD native | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
 
       - name: Cache Godot download
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .tools
-          key: godot-${{ hashFiles('tools/build.sh') }}
+          key: godot-${{ steps.keys.outputs.godot }}
 
       - name: Cache compiled objects
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .scons-cache
-          key: scons-${{ hashFiles('.gitmodules', 'native/**') }}
+          key: scons-${{ steps.keys.outputs.native }}
           restore-keys: scons-
 
-      - name: Build
+      - name: Build release
         run: tools/build.sh windows
 
-      - uses: actions/upload-artifact@v4
+      - name: Build debug
+        run: tools/build.sh windows --debug
+
+      - name: Load every demo model (Linux, debug)
+        run: tools/smoke_test.sh
+
+      # Artifacts count against the account's storage quota (500 MB on a free
+      # private repo), so keep them briefly; tagged releases keep a permanent copy.
+      - uses: actions/upload-artifact@v6
         with:
           name: PNGTube-Remix-windows-x86_64
           path: dist/windows/
+          retention-days: 3
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: PNGTube-Remix-windows-x86_64-debug
+          path: dist/windows-debug/
+          retention-days: 1
           if-no-files-found: error
 
   smoke-test-windows:
@@ -51,22 +84,32 @@ jobs:
     needs: build-windows
     runs-on: windows-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: PNGTube-Remix-windows-x86_64
-          path: app
+          path: release
 
-      # Boots the exported app headless for 600 frames. Fails if it crashes, if a
-      # native extension DLL does not load, or if any script errors.
+      - uses: actions/download-artifact@v7
+        with:
+          name: PNGTube-Remix-windows-x86_64-debug
+          path: debug
+
+      # Boots each build headless for 600 frames. Fails on a crash, a plugin DLL
+      # that won't load, or a missing node. The debug build also reports GDScript
+      # runtime errors, which release builds don't print.
       - name: Run exported app
         shell: pwsh
         run: |
-          & app/PNGTube-Remix.console.exe --headless --quit-after 600 *> smoke.log
-          $code = $LASTEXITCODE
-          Get-Content smoke.log
-          if ($code -ne 0) { throw "App exited with code $code" }
-          $bad = Select-String -Path smoke.log -Pattern 'SCRIPT ERROR', 'Parse Error', 'dynamic library', 'Error loading extension', 'Cannot get class', 'Failed loading resource'
-          if ($bad) { $bad; throw "Errors found in app log" }
+          foreach ($build in 'release', 'debug') {
+            Write-Host "::group::$build build"
+            & "$build/PNGTube-Remix.console.exe" --headless --quit-after 600 *> "$build.log"
+            $code = $LASTEXITCODE
+            Get-Content "$build.log"
+            Write-Host "::endgroup::"
+            if ($code -ne 0) { throw "$build build exited with code $code" }
+            $bad = Select-String -Path "$build.log" -Pattern 'SCRIPT ERROR', 'Parse Error', 'Node not found', 'dynamic library', 'Error loading extension', 'Cannot get class', 'Failed loading resource'
+            if ($bad) { $bad; throw "Errors found in the $build build's log" }
+          }
 
   release:
     name: Publish release
@@ -76,7 +119,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: PNGTube-Remix-windows-x86_64
           path: PNGTube-Remix
