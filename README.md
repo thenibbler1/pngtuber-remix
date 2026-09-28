@@ -15,10 +15,12 @@ source with one command, from pinned inputs.
 | License texts | Not included in the download | `THIRD-PARTY-LICENSES.txt` in every build, covering Godot and every bundled component |
 | UI themes | 8 color skins plus a picker in Settings | Removed. Every window uses Godot's plain default look. (Upstream's "None" option came close but still left the White skin on the Switch Session and Grid Snap Size dialogs.) |
 | Platforms | Windows, Linux | Windows (Linux still builds and is used for testing) |
+| First layer selection | Freezes briefly while Windows builds the selection outline's graphics pipeline | Built at startup instead ([`shader_warmup.gd`](Scripts/AutoLoads/shader_warmup.gd)) |
+| Selecting many layers | Every panel refreshes once per changed row; shift-selecting 38 layers froze for about 2.3 s | One refresh per click, about 0.06 s |
 
 Everything else (models, rigging, appendages, meshes, PSD/GIF/APNG import,
 WebSocket and tracking, lip sync, hotkeys, stream mode) is upstream code,
-unchanged.
+unchanged apart from those two speed fixes.
 
 ## Download
 

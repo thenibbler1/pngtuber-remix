@@ -117,6 +117,12 @@ After merging:
   git diff 5b80834 3c87a9c -- native/global_input native/miniaudio_mic | git apply --3way
   ```
 - **Upstream touched theme code:** keep this fork's version, which has no themes.
+- **Upstream changed layer selection** (`layers_scripts.gd`, `properties_script.gd`):
+  keep this fork's two speed fixes, one queued refresh per selection change and
+  `set_data()` called once after the loop.
+- **Upstream added a shader drawn on the model** (a new `.gdshader` used by an
+  object scene): add it to `SHADERS` in `Scripts/AutoLoads/shader_warmup.gd`, or
+  selecting that kind of object freezes briefly the first time on Windows.
 - **Upstream changed the demo models:** `tools/smoke_test.sh` will fail. Once
   you're happy the new models load correctly, update the expected values in
   `tools/smoke_test.gd`.

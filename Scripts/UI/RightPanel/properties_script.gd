@@ -44,8 +44,10 @@ func nullfy():
 
 func enable():
 	var seen_comment : bool = false
+	var has_valid_sprite : bool = false
 	for i in Global.held_sprites:
 		if i != null && is_instance_valid(i):
+			has_valid_sprite = true
 			if i.sprite_type == "Comment":
 				seen_comment = true
 
@@ -77,7 +79,9 @@ func enable():
 				%FlipSpriteV.disabled = true
 			%RestModeOption.disabled = false
 
-			set_data()
+	# Once, not per sprite: set_data() already goes through every selected sprite.
+	if has_valid_sprite:
+		set_data()
 
 func set_data():
 	should_change = false

@@ -45,6 +45,7 @@ GlobInput="*res://Scripts/AutoLoads/global_input.tscn"
 CommandLine="*uid://bb316uj87yar8"
 Tracker="*res://Scripts/Trackings/TrackingBackend.gd"
 LanguageManager="*uid://htrtywrh8c4v"
+ShaderWarmup="*res://Scripts/AutoLoads/shader_warmup.gd"
 
 [debug]
 

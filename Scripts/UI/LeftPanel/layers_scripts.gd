@@ -6,6 +6,8 @@ signal sprite_info
 @export var tree : Tree 
 @export var layer_buttons : Node
 
+var select_items_queued : bool = false
+
 func _ready() -> void:
 	var root = tree.create_item()
 	var test = tr("TR_MODEL")
@@ -160,9 +162,16 @@ func _on_layers_tree_gui_input(event: InputEvent) -> void:
 		layers_popup.popup(Rect2i(get_parent().get_global_mouse_position().x,get_parent().get_global_mouse_position().y, 100,100 ))
 
 func _on_layers_tree_multi_selected(item: TreeItem, _column: int, selected: bool) -> void:
+	# The tree emits this once per row that changed (a shift-click over 39 rows
+	# emits it 39 times), and select_items reads the whole selection anyway, so
+	# queue it once; refreshing every panel per row froze the app for seconds.
+	if select_items_queued:
+		return
+	select_items_queued = true
 	call_deferred("select_items", item, _column, selected)
 
 func select_items(_item: TreeItem, _column: int, _selected: bool):
+	select_items_queued = false
 	var cleaned_array : Array[SpriteObject] = []
 	for i in get_tree().get_nodes_in_group("Sprites"):
 		if i.treeitem.is_selected(0):
