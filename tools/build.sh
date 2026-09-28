@@ -102,9 +102,7 @@ for f in version.txt "${NEEDED[@]}"; do
 done
 ((${#MISSING[@]} == 0)) || unpack "$TOOLS/templates.tpz" "$TEMPLATES" "${MISSING[@]}"
 
-# Full license texts for everything shipped besides the app itself: Godot and
-# the libraries compiled into it (dumped from the pinned engine), then each
-# plugin and bundled asset.
+# Full license texts for everything shipped besides the app itself.
 LICENSE_FILES=(
   "godot-cpp (in the plugin DLLs)|native/godot-cpp/LICENSE.md"
   "godot-gif (GIF import plugin)|native/godot-gif/LICENSE.txt"
@@ -116,26 +114,33 @@ LICENSE_FILES=(
   "aimg_io (APNG import/export)|addons/aimg_io/COPYING.txt"
   "WigglyAppendage2D|licenses/wiggly-appendage-2d.txt"
   "Godot lip sync|licenses/godot-lip-sync.txt"
-  "Pixelorama (PSD import)|licenses/pixelorama.txt"
+  "Pixelorama (PSD import, blend-mode shader)|licenses/pixelorama.txt"
+  "GLSL color space functions (blend-mode shader)|licenses/glsl-color-spaces.txt"
   "Open Sans font|licenses/open-sans.txt"
 )
 write_licenses() { # out
-  local out="$1" tmp rule entry
-  tmp="$(mktemp -d)"
-  printf 'config_version=5\n' > "$tmp/project.godot"
-  cp "$ROOT/tools/engine_licenses.gd" "$tmp/"
-  "$GODOT" --headless --path "$tmp" -s res://engine_licenses.gd -- "$tmp/engine.txt" >/dev/null
+  local out="$1" godot="licenses/godot-$GODOT_VERSION" rule entry files
+  if [[ ! -f "$ROOT/$godot/COPYRIGHT.txt" ]]; then
+    echo "Missing $godot/: copy LICENSE.txt and COPYRIGHT.txt from Godot's ${GODOT_VERSION}-stable tag." >&2
+    exit 1
+  fi
+  files=(
+    "Godot Engine $GODOT_VERSION (the executable)|$godot/LICENSE.txt"
+    "Components compiled into Godot Engine $GODOT_VERSION (Godot's COPYRIGHT.txt)|$godot/COPYRIGHT.txt"
+  )
+  # Only the Windows templates contain the D3D12 renderer and its Mesa code.
+  if [[ "$PLATFORM" == windows ]]; then
+    files+=("Mesa (in Godot's D3D12 renderer)|licenses/mesa.txt")
+  fi
+  files+=("${LICENSE_FILES[@]}")
   rule="$(printf '=%.0s' {1..79})"
   {
     echo "Third-party licenses for PNGTube-Remix. The app itself is under LICENSE.txt."
-    printf '\n%s\n\n' "$rule"
-    cat "$tmp/engine.txt"
-    for entry in "${LICENSE_FILES[@]}"; do
+    for entry in "${files[@]}"; do
       printf '\n%s\n\n%s\n\n' "$rule" "${entry%%|*}"
       cat "$ROOT/${entry#*|}"
     done
   } > "$out"
-  rm -rf "$tmp"
 }
 
 step "Building native extensions from source"

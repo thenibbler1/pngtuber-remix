@@ -3,14 +3,15 @@
 PNGTuber Remix itself is © MudkipWorld and distributed under the custom
 license in [`LICENSE`](LICENSE). It ships with or builds the components below.
 Every build (`tools/build.sh`) includes `THIRD-PARTY-LICENSES.txt` with the
-full license text of each one, plus the notices for the libraries compiled
-into Godot itself.
+full license text of each one, including Godot's own COPYRIGHT.txt for the
+libraries compiled into the engine.
 
 ## Downloaded by `tools/build.sh` (official prebuilt, SHA-512 pinned)
 
 | Component | Where | Source | License |
 |---|---|---|---|
-| Godot Engine 4.7.2 editor and export templates | the shipped `.exe` is Godot's official Windows template | https://github.com/godotengine/godot/releases/tag/4.7.2-stable | MIT, plus the licenses of the libraries bundled in the engine |
+| Godot Engine 4.7.2 editor and export templates | the shipped `.exe` is Godot's official Windows template | https://github.com/godotengine/godot/releases/tag/4.7.2-stable | MIT, plus the licenses of the libraries compiled into the engine (`licenses/godot-4.7.2/COPYRIGHT.txt`) |
+| Mesa 25.3.1 NIR, SPIR-V and DXIL compilers | inside the Windows `.exe` (Godot's D3D12 renderer, via godot-nir-static 25.3.1-3); not listed in Godot's COPYRIGHT.txt | https://gitlab.freedesktop.org/mesa/mesa | MIT and others, per file; see `licenses/mesa.txt` |
 
 ## Built from source by `tools/build.sh`
 
@@ -44,6 +45,7 @@ revision (`get_hook_mouse_position`, `get_virtual_mouse_position`,
 | WigglyAppendage2D (Tameno) | `addons/wiggly_appendage_2d` | Unlicense |
 | Godot lip sync (Malcolm Nixon) | `UI/Lipsync stuff/godot-lip-sync` | MIT |
 | PSD import, adapted from Pixelorama | `Scripts/Misc/PSD_parser.gd` | MIT |
+| Blend-mode shader, adapted from Pixelorama's `BlendLayers.gdshader`, with color space functions by tobspr (GLSL-Color-Spaces) | `Scripts/Shaders/BlendModes.gdshaderinc` | MIT (both) |
 | Open Sans | `Scripts/Fonts/OpenSans-Medium.ttf` | SIL Open Font License 1.1 |
 
 License texts for components that don't carry their own file in this repo are
